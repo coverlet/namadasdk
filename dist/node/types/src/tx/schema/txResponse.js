@@ -17,7 +17,7 @@ class TxResponseMsgValue {
 }
 exports.TxResponseMsgValue = TxResponseMsgValue;
 __decorate([
-    (0, borsh_1.field)({ type: "string" })
+    (0, borsh_1.field)({ type: "u8" })
 ], TxResponseMsgValue.prototype, "code", void 0);
 __decorate([
     (0, borsh_1.field)({ type: (0, borsh_1.vec)(batchTxResult_1.BatchTxResultMsgValue) })

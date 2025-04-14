@@ -7,7 +7,45 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { field, option, vec } from "@dao-xyz/borsh";
 import { WrapperTxMsgValue } from "./wrapperTx";
+export class MaspTxIn {
+    constructor(data) {
+        Object.assign(this, data);
+    }
+}
+__decorate([
+    field({ type: "string" })
+], MaspTxIn.prototype, "token", void 0);
+__decorate([
+    field({ type: "string" })
+], MaspTxIn.prototype, "value", void 0);
+__decorate([
+    field({ type: "string" })
+], MaspTxIn.prototype, "owner", void 0);
+export class MaspTxOut {
+    constructor(data) {
+        Object.assign(this, data);
+    }
+}
+__decorate([
+    field({ type: "string" })
+], MaspTxOut.prototype, "token", void 0);
+__decorate([
+    field({ type: "string" })
+], MaspTxOut.prototype, "value", void 0);
+__decorate([
+    field({ type: "string" })
+], MaspTxOut.prototype, "address", void 0);
 export class CommitmentMsgValue {
+    constructor(data) {
+        const maspTxIn = data.maspTxIn ?
+            data.maspTxIn.map((txIn) => new MaspTxIn(txIn))
+            : undefined;
+        const maspTxOut = data.maspTxOut ?
+            data.maspTxOut.map((txOut) => new MaspTxOut(txOut))
+            : undefined;
+        Object.assign(this, Object.assign(Object.assign({}, data), { maspTxIn,
+            maspTxOut }));
+    }
 }
 __decorate([
     field({ type: "u8" })
@@ -24,6 +62,12 @@ __decorate([
 __decorate([
     field({ type: option("string") })
 ], CommitmentMsgValue.prototype, "memo", void 0);
+__decorate([
+    field({ type: option(vec(MaspTxIn)) })
+], CommitmentMsgValue.prototype, "maspTxIn", void 0);
+__decorate([
+    field({ type: option(vec(MaspTxOut)) })
+], CommitmentMsgValue.prototype, "maspTxOut", void 0);
 export class TxDetailsMsgValue {
 }
 __decorate([

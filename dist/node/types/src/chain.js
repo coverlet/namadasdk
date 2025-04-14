@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Extensions = exports.BridgeType = void 0;
+exports.NamadaChains = exports.Extensions = exports.BridgeType = void 0;
 var BridgeType;
 (function (BridgeType) {
     BridgeType["IBC"] = "ibc";
@@ -25,4 +25,12 @@ exports.Extensions = {
         url: "https://metamask.io/",
     },
 };
+/**
+ * Chain name lookup for mainnet and known long-running testnets
+ */
+exports.NamadaChains = new Map([
+    ["namada.5f5de2dd1b88cba30586420", "Namada Mainnet"],
+    ["housefire-alpaca.cc0d3e0c033be", "Housefire Testnet"],
+    ["campfire-square.ff09671d333707", "Campfire Testnet"],
+]);
 //# sourceMappingURL=chain.js.map

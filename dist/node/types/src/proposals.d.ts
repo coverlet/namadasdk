@@ -1,5 +1,5 @@
 import BigNumber from "bignumber.js";
-export declare const proposalStatuses: readonly ["pending", "ongoing", "passed", "rejected"];
+export declare const proposalStatuses: readonly ["pending", "ongoing", "passed", "rejected", "executed"];
 export type ProposalStatus = (typeof proposalStatuses)[number];
 export declare const isProposalStatus: (str: string) => str is ProposalStatus;
 export type Proposal = {
@@ -52,7 +52,7 @@ export type Default = {
 };
 export type DefaultWithWasm = {
     type: "default_with_wasm";
-    data: Uint8Array;
+    data: string;
 };
 export type PgfSteward = {
     type: "pgf_steward";
@@ -66,6 +66,7 @@ export type ProposalType = Default | DefaultWithWasm | PgfSteward | PgfPayment;
 export type ProposalTypeString = ProposalType["type"];
 export declare const voteTypes: readonly ["yay", "nay", "abstain"];
 export type VoteType = (typeof voteTypes)[number];
+export type UnknownVoteType = "unknown";
 export declare const isVoteType: (str: string) => str is VoteType;
 export type Votes = Record<VoteType, BigNumber>;
 type VoteCommonProperties = {

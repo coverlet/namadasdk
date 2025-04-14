@@ -14,6 +14,26 @@ export declare class TransparentTransferMsgValue {
     data: TransparentTransferDataMsgValue[];
     constructor({ data }: TransparentTransferProps);
 }
+export declare class BparamsSpendMsgValue {
+    rcv: Uint8Array;
+    alpha: Uint8Array;
+    constructor(data: BparamsSpendMsgValue);
+}
+export declare class BparamsOutputMsgValue {
+    rcv: Uint8Array;
+    rcm: Uint8Array;
+    constructor(data: BparamsOutputMsgValue);
+}
+export declare class BparamsConvertMsgValue {
+    rcv: Uint8Array;
+    constructor(data: BparamsConvertMsgValue);
+}
+export declare class BparamsMsgValue {
+    spend: BparamsSpendMsgValue;
+    output: BparamsOutputMsgValue;
+    convert: BparamsConvertMsgValue;
+    constructor(data: BparamsMsgValue);
+}
 /**
  * Shielded Transfer schemas
  */
@@ -27,7 +47,8 @@ export declare class ShieldedTransferDataMsgValue {
 export declare class ShieldedTransferMsgValue {
     data: ShieldedTransferDataMsgValue[];
     gasSpendingKey?: string;
-    constructor({ data, gasSpendingKey }: ShieldedTransferProps);
+    bparams?: BparamsMsgValue[];
+    constructor({ data, gasSpendingKey, bparams }: ShieldedTransferProps);
 }
 /**
  * Shielding Transfer schemas
@@ -41,6 +62,7 @@ export declare class ShieldingTransferDataMsgValue {
 export declare class ShieldingTransferMsgValue {
     target: string;
     data: ShieldingTransferDataMsgValue[];
+    bparams?: BparamsMsgValue[];
     constructor({ data, target }: ShieldingTransferProps);
 }
 /**
@@ -56,7 +78,8 @@ export declare class UnshieldingTransferMsgValue {
     source: string;
     data: UnshieldingTransferDataMsgValue[];
     gasSpendingKey?: string;
-    constructor({ source, data, gasSpendingKey }: UnshieldingTransferProps);
+    bparams?: BparamsMsgValue[];
+    constructor({ source, data, gasSpendingKey, bparams, }: UnshieldingTransferProps);
 }
 /**
  * General Transfer schema used for displaying details
@@ -66,8 +89,20 @@ export declare class TransferDataMsgValue {
     token: string;
     amount: BigNumber;
 }
+/**
+ * Used only for serializing transfers during build
+ */
 export declare class TransferMsgValue {
     sources: TransferDataMsgValue[];
     targets: TransferDataMsgValue[];
     shieldedSectionHash?: Uint8Array;
+}
+/**
+ * When deserializing for Transfer Details, return version with
+ * shieldedSectionHash encoded as hex instead of Uint8Array
+ */
+export declare class TransferDetailsMsgValue {
+    sources: TransferDataMsgValue[];
+    targets: TransferDataMsgValue[];
+    shieldedSectionHash?: string;
 }

@@ -33,4 +33,10 @@ __decorate([
 __decorate([
     field({ type: option("bool") })
 ], WrapperTxMsgValue.prototype, "force", void 0);
+__decorate([
+    field({ type: option("u64") })
+], WrapperTxMsgValue.prototype, "expiration", void 0);
+__decorate([
+    field({ type: option("string") })
+], WrapperTxMsgValue.prototype, "wrapperFeePayer", void 0);
 //# sourceMappingURL=wrapperTx.js.map

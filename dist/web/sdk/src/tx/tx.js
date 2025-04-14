@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 import { deserialize } from "@dao-xyz/borsh";
 import { Sdk as SdkWasm, TxType, deserialize_tx, get_inner_tx_hashes, } from "../../../shared/src";
-import { BondMsgValue, ClaimRewardsMsgValue, EthBridgeTransferMsgValue, IbcTransferMsgValue, Message, RedelegateMsgValue, RevealPkMsgValue, ShieldedTransferMsgValue, ShieldingTransferMsgValue, SignatureMsgValue, TransferMsgValue, TransparentTransferMsgValue, TxDetailsMsgValue, TxMsgValue, UnbondMsgValue, UnshieldingTransferMsgValue, VoteProposalMsgValue, WithdrawMsgValue, WrapperTxMsgValue, } from "../../../types/src";
+import { BondMsgValue, ClaimRewardsMsgValue, EthBridgeTransferMsgValue, IbcTransferMsgValue, Message, RedelegateMsgValue, RevealPkMsgValue, ShieldedTransferMsgValue, ShieldingTransferMsgValue, SignatureMsgValue, TransferDetailsMsgValue, TransparentTransferMsgValue, TxDetailsMsgValue, TxMsgValue, UnbondMsgValue, UnshieldingTransferMsgValue, VoteProposalMsgValue, WithdrawMsgValue, WrapperTxMsgValue, } from "../../../types/src";
 /**
  * SDK functionality related to transactions
  */
@@ -243,6 +243,16 @@ export class Tx {
     }
     /**
      * Append signature for transactions signed by Ledger Hardware Wallet
+     * @param txBytes - bytes of the transaction
+     * @param signingData - signing data
+     * @param signature - masp signature
+     * @returns transaction bytes with signature appended
+     */
+    appendMaspSignature(txBytes, signingData, signature) {
+        return this.sdk.sign_masp_ledger(txBytes, signingData, signature);
+    }
+    /**
+     * Append signature for transactions signed by Ledger Hardware Wallet
      * @param txBytes - Serialized transaction
      * @param ledgerSignatureResponse - Serialized signature as returned from Ledger
      * @returns - Serialized Tx bytes with signature appended
@@ -310,7 +320,7 @@ export class Tx {
                 case TxType.ClaimRewards:
                     return deserialize(data, ClaimRewardsMsgValue);
                 case TxType.Transfer:
-                    return deserialize(data, TransferMsgValue);
+                    return deserialize(data, TransferDetailsMsgValue);
                 case TxType.RevealPK:
                     return deserialize(data, RevealPkMsgValue);
                 case TxType.IBCTransfer:
@@ -319,9 +329,13 @@ export class Tx {
                     throw "Unsupported Tx type!";
             }
         };
-        return Object.assign(Object.assign({}, wrapperTx), { commitments: commitments.map(({ txType, hash, txCodeId, data, memo }) => (Object.assign({ txType: txType, hash,
+        return Object.assign(Object.assign({}, wrapperTx), { 
+            // Wrapper fee payer is always defined at this point
+            wrapperFeePayer: wrapperTx.wrapperFeePayer, commitments: commitments.map(({ txType, hash, txCodeId, data, memo, maspTxIn, maspTxOut }) => (Object.assign({ txType: txType, hash,
                 txCodeId,
-                memo }, getProps(txType, data)))) });
+                memo,
+                maspTxIn,
+                maspTxOut }, getProps(txType, data)))) });
     }
     /**
      * Generate the memo needed for performing an IBC transfer to a Namada shielded

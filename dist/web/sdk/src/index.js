@@ -1,9 +1,10 @@
 // Make Ledger available for direct-import as it is not dependent on Sdk initialization
-export { Ledger, initLedgerHIDTransport, initLedgerUSBTransport, } from "./ledger";
+export { LEDGER_MASP_BLACKLISTED, LEDGER_MIN_VERSION_ZIP32, Ledger, initLedgerUSBTransport, ledgerUSBList, requestLedgerDevice, } from "./ledger";
 // Export types
 export { Argon2Config, KdfType } from "./crypto";
 export { TxType, TxTypeLabel } from "./tx";
 export { ProgressBarNames, Sdk, SdkEvents } from "./sdk";
-export { publicKeyToBech32 } from "./keys";
+export { DEFAULT_BIP44_PATH, DEFAULT_ZIP32_PATH, MODIFIED_ZIP32_PATH, publicKeyToBech32, } from "./keys";
+export { ExtendedViewingKey, ProofGenerationKey, PseudoExtendedKey, } from "./masp";
 export { PhraseSize } from "./mnemonic";
 //# sourceMappingURL=index.js.map

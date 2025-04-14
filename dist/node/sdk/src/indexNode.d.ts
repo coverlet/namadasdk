@@ -6,12 +6,13 @@ export * from "./utils";
  * @async
  * @param cryptoMemory - WebAssembly.Memory of crypto package
  * @param url - URL of the node
+ * @param maspIndexerUrl - optional URL of the MASP indexer
  * @param storagePath - Path to store wallet files
  * @param [token] - Native token of the chain
  * @throws {Error} - Unable to Query native token
  * @returns - Sdk instance
  */
-export declare function getSdk(cryptoMemory: WebAssembly.Memory, url: string, storagePath: string, token: string): Sdk;
+export declare function getSdk(cryptoMemory: WebAssembly.Memory, url: string, maspIndexerUrl: string, storagePath: string, token: string): Sdk;
 /**
  * Query native token from the node
  * @async

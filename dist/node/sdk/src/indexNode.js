@@ -37,14 +37,17 @@ globalThis.crypto = node_crypto_1.webcrypto;
  * @async
  * @param cryptoMemory - WebAssembly.Memory of crypto package
  * @param url - URL of the node
+ * @param maspIndexerUrl - optional URL of the MASP indexer
  * @param storagePath - Path to store wallet files
  * @param [token] - Native token of the chain
  * @throws {Error} - Unable to Query native token
  * @returns - Sdk instance
  */
-function getSdk(cryptoMemory, url, storagePath, token) {
+function getSdk(cryptoMemory, url, maspIndexerUrl, storagePath, token) {
+    // We change empty string to undefined so it "maps" to the Option<String> in Rust
+    const maspIndexerUrlOpt = maspIndexerUrl.length === 0 ? undefined : maspIndexerUrl;
     // Instantiate QueryWasm
-    const query = new shared_1.Query(url);
+    const query = new shared_1.Query(url, maspIndexerUrlOpt);
     // Instantiate SdkWasm
     const sdk = new shared_1.Sdk(url, token, storagePath);
     return new sdk_1.Sdk(sdk, query, cryptoMemory, url, token);

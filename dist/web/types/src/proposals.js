@@ -3,6 +3,7 @@ export const proposalStatuses = [
     "ongoing",
     "passed",
     "rejected",
+    "executed",
 ];
 export const isProposalStatus = (str) => proposalStatuses.includes(str);
 export const voteTypes = ["yay", "nay", "abstain"];

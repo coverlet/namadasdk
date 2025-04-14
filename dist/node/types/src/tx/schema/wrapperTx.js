@@ -37,4 +37,10 @@ __decorate([
 __decorate([
     (0, borsh_1.field)({ type: (0, borsh_1.option)("bool") })
 ], WrapperTxMsgValue.prototype, "force", void 0);
+__decorate([
+    (0, borsh_1.field)({ type: (0, borsh_1.option)("u64") })
+], WrapperTxMsgValue.prototype, "expiration", void 0);
+__decorate([
+    (0, borsh_1.field)({ type: (0, borsh_1.option)("string") })
+], WrapperTxMsgValue.prototype, "wrapperFeePayer", void 0);
 //# sourceMappingURL=wrapperTx.js.map

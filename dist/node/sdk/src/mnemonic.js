@@ -2,8 +2,11 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Mnemonic = exports.PhraseSize = void 0;
 const crypto_1 = require("../../crypto/src");
-var crypto_2 = require("../../crypto/src");
-Object.defineProperty(exports, "PhraseSize", { enumerable: true, get: function () { return crypto_2.PhraseSize; } });
+var PhraseSize;
+(function (PhraseSize) {
+    PhraseSize[PhraseSize["N12"] = 12] = "N12";
+    PhraseSize[PhraseSize["N24"] = 24] = "N24";
+})(PhraseSize || (exports.PhraseSize = PhraseSize = {}));
 /**
  * Class for accessing mnemonic functionality from wasm
  */
@@ -19,7 +22,7 @@ class Mnemonic {
      * @param [size] Mnemonic length
      * @returns An array of words
      */
-    generate(size = crypto_1.PhraseSize.N12) {
+    generate(size = PhraseSize.N12) {
         const mnemonic = new crypto_1.Mnemonic(size);
         const vecStringPointer = mnemonic.to_words();
         const words = (0, crypto_1.readVecStringPointer)(vecStringPointer, this.cryptoMemory);

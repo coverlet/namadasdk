@@ -35,7 +35,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = init;
 exports.initMulticore = initMulticore;
 const crypto = __importStar(require("../../crypto/src"));
-// We have to use relative improts here othewise ts-patch is getting confused and produces wrong paths after compialtion
+// We have to use relative imports here othewise ts-patch is getting confused and produces wrong paths after compialtion
 const init_thread_pool_1 = require("../../shared/src/init-thread-pool");
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const cryptoMemory = crypto.__wasm.memory;

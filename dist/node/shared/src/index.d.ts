@@ -9,7 +9,7 @@ export declare class Query extends RustQuery {
     query_my_validators: (owner_addresses: any[]) => Promise<any>;
     query_total_bonds: (address: string) => Promise<any>;
     delegators_votes: (proposal_id: bigint) => Promise<any>;
-    get_total_delegations: (addresses: any[], epoch?: bigint | undefined) => Promise<any>;
+    get_total_delegations: (addresses: any[], epoch?: bigint | null | undefined) => Promise<any>;
 }
 export * from "./types";
 export { Proposal, Proposals };

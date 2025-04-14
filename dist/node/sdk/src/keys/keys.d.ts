@@ -1,5 +1,5 @@
 import { Bip44Path, Zip32Path } from "../../../types/src";
-import { Address, ShieldedKeys, TransparentKeys } from "./types";
+import { Address, GeneratedPaymentAddress, ShieldedKeys, TransparentKeys } from "./types";
 /**
  * Namespace for key related functions
  */
@@ -39,12 +39,11 @@ export declare class Keys {
     /**
      * Derive shielded keys and address from a seed and path
      * @param seed - Seed
-     * @param [bip44Path] - Bip44 path object to derive private key to seed the shielded keys
      * @param [zip32Path] - Zip32 path object to derive the shielded keys
      * @param [diversifier] - Diversifier bytes
      * @returns Shielded keys and address
      */
-    deriveShieldedFromSeed(seed: Uint8Array, bip44Path?: Bip44Path, zip32Path?: Zip32Path, diversifier?: Uint8Array): ShieldedKeys;
+    deriveShieldedFromSeed(seed: Uint8Array, zip32Path?: Zip32Path, diversifier?: Uint8Array): ShieldedKeys;
     /**
      * Derive shielded keys and address from private key bytes
      * @param privateKeyBytes - secret
@@ -61,6 +60,19 @@ export declare class Keys {
      * @returns Object representing MASP related keys
      */
     private deriveFromShieldedWallet;
+    /**
+     * Generate a payment address from viewing key and diversifier index
+     * @param xfvk - viewing key
+     * @param [index] - diversifier index
+     * @returns GeneratedPaymentAddress
+     */
+    genPaymentAddress(xfvk: string, index?: number): GeneratedPaymentAddress;
+    /**
+     * Given a bech32m-encoded extended spending key, return viewing and proof-gen keys
+     * @param spendingKey - string
+     * @returns ShieldedKeys
+     */
+    shieldedKeysFromSpendingKey(spendingKey: string): ShieldedKeys;
     /**
      * Generate a disposable transparent keypair
      * @returns Keys and address

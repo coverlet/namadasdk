@@ -1,13 +1,14 @@
-export { Ledger, initLedgerHIDTransport, initLedgerUSBTransport, } from "./ledger";
-export type { LedgerAddressAndPublicKey, LedgerShieldedKeys, LedgerStatus, } from "./ledger";
+export { LEDGER_MASP_BLACKLISTED, LEDGER_MIN_VERSION_ZIP32, Ledger, initLedgerUSBTransport, ledgerUSBList, requestLedgerDevice, } from "./ledger";
+export type { LedgerAddressAndPublicKey, LedgerProofGenerationKey, LedgerStatus, LedgerViewingKey, } from "./ledger";
 export { Argon2Config, KdfType } from "./crypto";
 export type { Argon2Params, Crypto, CryptoRecord, EncryptionParams, } from "./crypto";
-export type { Address, ShieldedKeys, TransparentKeys } from "./keys";
+export type { Address, GeneratedPaymentAddress, ShieldedKeys, TransparentKeys, } from "./keys";
 export type { Balance, Bonds, DelegationTotals, DelegatorsVotes, Rpc, StakingPositions, StakingTotals, Unbonds, } from "./rpc";
 export { TxType, TxTypeLabel } from "./tx";
 export type { SupportedTx } from "./tx";
 export { ProgressBarNames, Sdk, SdkEvents } from "./sdk";
-export { publicKeyToBech32 } from "./keys";
+export { DEFAULT_BIP44_PATH, DEFAULT_ZIP32_PATH, MODIFIED_ZIP32_PATH, publicKeyToBech32, } from "./keys";
+export { ExtendedViewingKey, ProofGenerationKey, PseudoExtendedKey, } from "./masp";
 export type { Masp } from "./masp";
 export { PhraseSize } from "./mnemonic";
 export type { Mnemonic } from "./mnemonic";

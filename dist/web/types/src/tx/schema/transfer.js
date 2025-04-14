@@ -37,6 +37,50 @@ export class TransparentTransferMsgValue {
 __decorate([
     field({ type: vec(TransparentTransferDataMsgValue) })
 ], TransparentTransferMsgValue.prototype, "data", void 0);
+export class BparamsSpendMsgValue {
+    constructor(data) {
+        Object.assign(this, data);
+    }
+}
+__decorate([
+    field({ type: vec("u8") })
+], BparamsSpendMsgValue.prototype, "rcv", void 0);
+__decorate([
+    field({ type: vec("u8") })
+], BparamsSpendMsgValue.prototype, "alpha", void 0);
+export class BparamsOutputMsgValue {
+    constructor(data) {
+        Object.assign(this, data);
+    }
+}
+__decorate([
+    field({ type: vec("u8") })
+], BparamsOutputMsgValue.prototype, "rcv", void 0);
+__decorate([
+    field({ type: vec("u8") })
+], BparamsOutputMsgValue.prototype, "rcm", void 0);
+export class BparamsConvertMsgValue {
+    constructor(data) {
+        Object.assign(this, data);
+    }
+}
+__decorate([
+    field({ type: vec("u8") })
+], BparamsConvertMsgValue.prototype, "rcv", void 0);
+export class BparamsMsgValue {
+    constructor(data) {
+        Object.assign(this, data);
+    }
+}
+__decorate([
+    field({ type: BparamsSpendMsgValue })
+], BparamsMsgValue.prototype, "spend", void 0);
+__decorate([
+    field({ type: BparamsOutputMsgValue })
+], BparamsMsgValue.prototype, "output", void 0);
+__decorate([
+    field({ type: BparamsConvertMsgValue })
+], BparamsMsgValue.prototype, "convert", void 0);
 /**
  * Shielded Transfer schemas
  */
@@ -58,10 +102,17 @@ __decorate([
     field(BigNumberSerializer)
 ], ShieldedTransferDataMsgValue.prototype, "amount", void 0);
 export class ShieldedTransferMsgValue {
-    constructor({ data, gasSpendingKey }) {
+    constructor({ data, gasSpendingKey, bparams }) {
         Object.assign(this, {
             data: data.map((shieldedTransferDataProps) => new ShieldedTransferDataMsgValue(shieldedTransferDataProps)),
             gasSpendingKey,
+            bparams: bparams === null || bparams === void 0 ? void 0 : bparams.map((bparam) => {
+                return new BparamsMsgValue({
+                    spend: new BparamsSpendMsgValue(bparam.spend),
+                    output: new BparamsOutputMsgValue(bparam.output),
+                    convert: new BparamsConvertMsgValue(bparam.convert),
+                });
+            }),
         });
     }
 }
@@ -71,6 +122,9 @@ __decorate([
 __decorate([
     field({ type: option("string") })
 ], ShieldedTransferMsgValue.prototype, "gasSpendingKey", void 0);
+__decorate([
+    field({ type: option(vec(BparamsMsgValue)) })
+], ShieldedTransferMsgValue.prototype, "bparams", void 0);
 /**
  * Shielding Transfer schemas
  */
@@ -102,6 +156,9 @@ __decorate([
 __decorate([
     field({ type: vec(ShieldingTransferDataMsgValue) })
 ], ShieldingTransferMsgValue.prototype, "data", void 0);
+__decorate([
+    field({ type: option(vec(BparamsMsgValue)) })
+], ShieldingTransferMsgValue.prototype, "bparams", void 0);
 /**
  * Unshielding Transfer schemas
  */
@@ -120,11 +177,18 @@ __decorate([
     field(BigNumberSerializer)
 ], UnshieldingTransferDataMsgValue.prototype, "amount", void 0);
 export class UnshieldingTransferMsgValue {
-    constructor({ source, data, gasSpendingKey }) {
+    constructor({ source, data, gasSpendingKey, bparams, }) {
         Object.assign(this, {
             source,
             data: data.map((unshieldingTransferDataProps) => new UnshieldingTransferDataMsgValue(unshieldingTransferDataProps)),
             gasSpendingKey,
+            bparams: bparams === null || bparams === void 0 ? void 0 : bparams.map((bparam) => {
+                return new BparamsMsgValue({
+                    spend: new BparamsSpendMsgValue(bparam.spend),
+                    output: new BparamsOutputMsgValue(bparam.output),
+                    convert: new BparamsConvertMsgValue(bparam.convert),
+                });
+            }),
         });
     }
 }
@@ -137,6 +201,9 @@ __decorate([
 __decorate([
     field({ type: option("string") })
 ], UnshieldingTransferMsgValue.prototype, "gasSpendingKey", void 0);
+__decorate([
+    field({ type: option(vec(BparamsMsgValue)) })
+], UnshieldingTransferMsgValue.prototype, "bparams", void 0);
 /**
  * General Transfer schema used for displaying details
  */
@@ -151,6 +218,9 @@ __decorate([
 __decorate([
     field(BigNumberSerializer)
 ], TransferDataMsgValue.prototype, "amount", void 0);
+/**
+ * Used only for serializing transfers during build
+ */
 export class TransferMsgValue {
 }
 __decorate([
@@ -162,4 +232,19 @@ __decorate([
 __decorate([
     field({ type: option(vec("u8")) })
 ], TransferMsgValue.prototype, "shieldedSectionHash", void 0);
+/**
+ * When deserializing for Transfer Details, return version with
+ * shieldedSectionHash encoded as hex instead of Uint8Array
+ */
+export class TransferDetailsMsgValue {
+}
+__decorate([
+    field({ type: vec(TransferDataMsgValue) })
+], TransferDetailsMsgValue.prototype, "sources", void 0);
+__decorate([
+    field({ type: vec(TransferDataMsgValue) })
+], TransferDetailsMsgValue.prototype, "targets", void 0);
+__decorate([
+    field({ type: option("string") })
+], TransferDetailsMsgValue.prototype, "shieldedSectionHash", void 0);
 //# sourceMappingURL=transfer.js.map

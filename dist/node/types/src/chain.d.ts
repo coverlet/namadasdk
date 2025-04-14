@@ -52,3 +52,7 @@ export type Chain = {
         portId: string;
     };
 };
+/**
+ * Chain name lookup for mainnet and known long-running testnets
+ */
+export declare const NamadaChains: Map<string, string>;

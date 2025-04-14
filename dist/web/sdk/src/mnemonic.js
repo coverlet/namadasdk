@@ -1,5 +1,9 @@
-import { Mnemonic as MnemonicWasm, PhraseSize, StringPointer, readVecStringPointer, readVecU8Pointer, } from "../../crypto/src";
-export { PhraseSize } from "../../crypto/src";
+import { Mnemonic as MnemonicWasm, StringPointer, readVecStringPointer, readVecU8Pointer, } from "../../crypto/src";
+export var PhraseSize;
+(function (PhraseSize) {
+    PhraseSize[PhraseSize["N12"] = 12] = "N12";
+    PhraseSize[PhraseSize["N24"] = 24] = "N24";
+})(PhraseSize || (PhraseSize = {}));
 /**
  * Class for accessing mnemonic functionality from wasm
  */

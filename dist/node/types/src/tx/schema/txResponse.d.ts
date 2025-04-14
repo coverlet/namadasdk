@@ -1,7 +1,7 @@
 import { TxResponseProps } from "../types";
 import { BatchTxResultMsgValue } from "./batchTxResult";
 export declare class TxResponseMsgValue {
-    code: string;
+    code: number;
     commitments: BatchTxResultMsgValue[];
     gasUsed: string;
     hash: string;

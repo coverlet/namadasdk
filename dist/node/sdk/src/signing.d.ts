@@ -14,12 +14,18 @@ export declare class Signing {
     /**
      * Sign Namada transaction
      * @param txProps - TxProps
-     * @param signingKey - private key
-     * @param xsks - spending keys
+     * @param signingKey - private key(s)
      * @param [chainId] - optional chain ID, will enforce validation if present
      * @returns signed tx bytes - Promise resolving to Uint8Array
      */
-    sign(txProps: TxProps, signingKey: string, xsks?: string[], chainId?: string): Promise<Uint8Array>;
+    sign(txProps: TxProps, signingKey: string | string[], chainId?: string): Promise<Uint8Array>;
+    /**
+     * Sign masp spends
+     * @param txProps - TxProps
+     * @param xsks - spending keys
+     * @returns tx with masp spends signed - Promise resolving to Uint8Array
+     */
+    signMasp(txProps: TxProps, xsks: string[]): Promise<Uint8Array>;
     /**
      * Sign arbitrary data
      * @param signingKey - private key

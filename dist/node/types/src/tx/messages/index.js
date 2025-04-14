@@ -8,6 +8,7 @@ class Message {
             return (0, borsh_1.serialize)(value);
         }
         catch (e) {
+            console.log("error", e);
             throw new Error(`Unable to serialize message: ${e}`);
         }
     }

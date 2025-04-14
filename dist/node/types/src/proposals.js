@@ -6,6 +6,7 @@ exports.proposalStatuses = [
     "ongoing",
     "passed",
     "rejected",
+    "executed",
 ];
 const isProposalStatus = (str) => exports.proposalStatuses.includes(str);
 exports.isProposalStatus = isProposalStatus;

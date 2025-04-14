@@ -5,14 +5,7 @@ const chains_1 = require("../../../chains/src");
 const crypto_1 = require("../../../crypto/src");
 const shared_1 = require("../../../shared/src");
 const utils_1 = require("../utils");
-const DEFAULT_BIP44_PATH = {
-    account: 0,
-    change: 0,
-    index: 0,
-};
-const DEFAULT_ZIP32_PATH = {
-    account: 0,
-};
+const types_1 = require("./types");
 /**
  * Namespace for key related functions
  */
@@ -52,7 +45,7 @@ class Keys {
      * @param [passphrase] - Bip39 passphrase
      * @returns Keys and address
      */
-    deriveFromMnemonic(phrase, path = DEFAULT_BIP44_PATH, passphrase) {
+    deriveFromMnemonic(phrase, path = types_1.DEFAULT_BIP44_PATH, passphrase) {
         const mnemonic = crypto_1.Mnemonic.from_phrase(phrase);
         const passphrasePtr = typeof passphrase === "string" ?
             new crypto_1.StringPointer(passphrase)
@@ -76,7 +69,7 @@ class Keys {
      * @param [path] - Bip44 path object
      * @returns Keys and address
      */
-    deriveFromSeed(seed, path = DEFAULT_BIP44_PATH) {
+    deriveFromSeed(seed, path = types_1.DEFAULT_BIP44_PATH) {
         const hdWallet = crypto_1.HDWallet.from_seed(seed);
         const bip44Path = (0, utils_1.makeBip44PathArray)(chains_1.chains.namada.bip44.coinType, path);
         const key = hdWallet.derive(new Uint32Array(bip44Path));
@@ -91,12 +84,12 @@ class Keys {
     /**
      * Derive shielded keys and address from a seed and path
      * @param seed - Seed
-     * @param [bip44Path] - Bip44 path object to derive private key to seed the shielded keys
      * @param [zip32Path] - Zip32 path object to derive the shielded keys
      * @param [diversifier] - Diversifier bytes
      * @returns Shielded keys and address
      */
-    deriveShieldedFromSeed(seed, bip44Path = DEFAULT_BIP44_PATH, zip32Path = DEFAULT_ZIP32_PATH, diversifier) {
+    deriveShieldedFromSeed(seed, zip32Path = types_1.DEFAULT_ZIP32_PATH, diversifier) {
+        const bip44Path = types_1.MODIFIED_ZIP32_PATH;
         const shieldedHdWallet = new crypto_1.ShieldedHDWallet(seed, (0, utils_1.makeBip44PathArray)(chains_1.chains.namada.bip44.coinType, bip44Path));
         return this.deriveFromShieldedWallet(shieldedHdWallet, zip32Path, diversifier);
     }
@@ -107,7 +100,7 @@ class Keys {
      * @param diversifier - Diversifier bytes
      * @returns Shielded keys and address
      */
-    deriveShieldedFromPrivateKey(privateKeyBytes, path = DEFAULT_ZIP32_PATH, diversifier) {
+    deriveShieldedFromPrivateKey(privateKeyBytes, path = types_1.DEFAULT_ZIP32_PATH, diversifier) {
         const shieldedHdWallet = crypto_1.ShieldedHDWallet.new_from_sk(privateKeyBytes);
         return this.deriveFromShieldedWallet(shieldedHdWallet, path, diversifier);
     }
@@ -125,16 +118,15 @@ class Keys {
         // Retrieve serialized types from wasm
         const xsk = derivedAccount.xsk();
         const xfvk = derivedAccount.xfvk();
-        const paymentAddress = derivedAccount.payment_address();
         // Deserialize and encode keys and address
         const extendedSpendingKey = new shared_1.ExtendedSpendingKey(xsk);
         const extendedViewingKey = new shared_1.ExtendedViewingKey(xfvk);
-        const address = new shared_1.PaymentAddress(paymentAddress).encode();
         const spendingKey = extendedSpendingKey.encode();
         const viewingKey = extendedViewingKey.encode();
         const pseudoExtendedKey = extendedSpendingKey
             .to_pseudo_extended_key()
             .encode();
+        const [diversifierIndex, address] = extendedViewingKey.default_payment_address();
         // Clear wasm resources from memory
         shieldedHdWallet.free();
         derivedAccount.free();
@@ -142,9 +134,43 @@ class Keys {
         extendedSpendingKey.free();
         return {
             address,
+            diversifierIndex,
             spendingKey,
             viewingKey,
             pseudoExtendedKey,
+        };
+    }
+    /**
+     * Generate a payment address from viewing key and diversifier index
+     * @param xfvk - viewing key
+     * @param [index] - diversifier index
+     * @returns GeneratedPaymentAddress
+     */
+    genPaymentAddress(xfvk, index = 0) {
+        const [diversifierIndex, address] = (0, shared_1.gen_payment_address)(xfvk, index);
+        return {
+            address,
+            diversifierIndex,
+        };
+    }
+    /**
+     * Given a bech32m-encoded extended spending key, return viewing and proof-gen keys
+     * @param spendingKey - string
+     * @returns ShieldedKeys
+     */
+    shieldedKeysFromSpendingKey(spendingKey) {
+        const extendedSpendingKey = shared_1.ExtendedSpendingKey.from_string(spendingKey);
+        const pseudoExtendedKey = extendedSpendingKey
+            .to_pseudo_extended_key()
+            .encode();
+        const viewingKey = extendedSpendingKey.to_viewing_key().encode();
+        const [diversifierIndex, address] = extendedSpendingKey.to_default_address();
+        return {
+            address,
+            diversifierIndex,
+            viewingKey,
+            pseudoExtendedKey,
+            spendingKey,
         };
     }
     /**

@@ -1,6 +1,6 @@
 import { Query as QueryWasm, Sdk as SdkWasm, TransferToEthereum } from "../../../shared/src";
-import { DatedViewingKey, TxResponseProps, WrapperTxProps } from "../../../types/src";
-import { Balance, DelegationTotals, DelegatorsVotes, GasCosts, StakingPositions, StakingTotals } from "./types";
+import { DatedViewingKey, TxResponseProps } from "../../../types/src";
+import { Balance, DelegationTotals, DelegatorsVotes, GasCosts, MaspTokenRewards, StakingPositions, StakingTotals } from "./types";
 /**
  * API for executing RPC requests with Namada
  */
@@ -99,10 +99,10 @@ export declare class Rpc {
      * Broadcast a Tx to the ledger
      * @async
      * @param signedTxBytes - Transaction with signature
-     * @param args - WrapperTxProps
+     * @param [deadline] - timeout deadline in seconds, defaults to 60 seconds
      * @returns TxResponseProps object
      */
-    broadcastTx(signedTxBytes: Uint8Array, args: WrapperTxProps): Promise<TxResponseProps>;
+    broadcastTx(signedTxBytes: Uint8Array, deadline?: bigint): Promise<TxResponseProps>;
     /**
      * Sync the shielded context
      * @async
@@ -111,4 +111,35 @@ export declare class Rpc {
      * @returns
      */
     shieldedSync(vks: DatedViewingKey[], chainId: string): Promise<void>;
+    /**
+     * Return shielded rewards for specific owner for the next masp epoch
+     * @async
+     * @param owner - Viewing key of an owner
+     * @param chainId - Chain ID to load the context for
+     * @returns amount in base units
+     */
+    shieldedRewards(owner: string, chainId: string): Promise<string>;
+    /**
+     * Return global shielded rewards per token
+     * @async
+     * @returns Array of MaspTokenRewards
+     */
+    globalShieldedRewardForTokens(): Promise<MaspTokenRewards[]>;
+    /**
+     * Return shielded rewards for specific owner and token for the next masp epoch
+     * @async
+     * @param owner - Viewing key of an owner
+     * @param token - Token address
+     * @param chainId - Chain ID to load the context for
+     * @returns amount in base units
+     */
+    shieldedRewardsPerToken(owner: string, token: string, chainId: string): Promise<string>;
+    /**
+     * Simulate shielded rewards per token and amount in next epoch
+     * @param chainId - Chain ID to load the context for
+     * @param token - Token address
+     * @param amount - Denominated amount
+     * @returns amount in base units
+     */
+    simulateShieldedRewards(chainId: string, token: string, amount: string): Promise<string>;
 }

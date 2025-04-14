@@ -1,5 +1,7 @@
-import { PhraseSize } from "../../crypto/src";
-export { PhraseSize } from "../../crypto/src";
+export declare enum PhraseSize {
+    N12 = 12,
+    N24 = 24
+}
 /**
  * Class for accessing mnemonic functionality from wasm
  */

@@ -13,7 +13,7 @@ export class TxResponseMsgValue {
     }
 }
 __decorate([
-    field({ type: "string" })
+    field({ type: "u8" })
 ], TxResponseMsgValue.prototype, "code", void 0);
 __decorate([
     field({ type: vec(BatchTxResultMsgValue) })

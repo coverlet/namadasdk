@@ -1,15 +1,8 @@
 import { chains } from "../../../chains/src";
-import { HDWallet, Mnemonic as MnemonicWasm, ShieldedHDWallet, StringPointer, readStringPointer, } from "../../../crypto/src";
-import { Address as AddressWasm, ExtendedSpendingKey, ExtendedViewingKey, PaymentAddress, public_key_to_bech32, } from "../../../shared/src";
+import { HDWallet, Mnemonic as MnemonicWasm, readStringPointer, ShieldedHDWallet, StringPointer, } from "../../../crypto/src";
+import { Address as AddressWasm, ExtendedSpendingKey, ExtendedViewingKey, gen_payment_address, public_key_to_bech32, } from "../../../shared/src";
 import { makeBip44PathArray, makeSaplingPathArray } from "../utils";
-const DEFAULT_BIP44_PATH = {
-    account: 0,
-    change: 0,
-    index: 0,
-};
-const DEFAULT_ZIP32_PATH = {
-    account: 0,
-};
+import { DEFAULT_BIP44_PATH, DEFAULT_ZIP32_PATH, MODIFIED_ZIP32_PATH, } from "./types";
 /**
  * Namespace for key related functions
  */
@@ -88,12 +81,12 @@ export class Keys {
     /**
      * Derive shielded keys and address from a seed and path
      * @param seed - Seed
-     * @param [bip44Path] - Bip44 path object to derive private key to seed the shielded keys
      * @param [zip32Path] - Zip32 path object to derive the shielded keys
      * @param [diversifier] - Diversifier bytes
      * @returns Shielded keys and address
      */
-    deriveShieldedFromSeed(seed, bip44Path = DEFAULT_BIP44_PATH, zip32Path = DEFAULT_ZIP32_PATH, diversifier) {
+    deriveShieldedFromSeed(seed, zip32Path = DEFAULT_ZIP32_PATH, diversifier) {
+        const bip44Path = MODIFIED_ZIP32_PATH;
         const shieldedHdWallet = new ShieldedHDWallet(seed, makeBip44PathArray(chains.namada.bip44.coinType, bip44Path));
         return this.deriveFromShieldedWallet(shieldedHdWallet, zip32Path, diversifier);
     }
@@ -122,16 +115,15 @@ export class Keys {
         // Retrieve serialized types from wasm
         const xsk = derivedAccount.xsk();
         const xfvk = derivedAccount.xfvk();
-        const paymentAddress = derivedAccount.payment_address();
         // Deserialize and encode keys and address
         const extendedSpendingKey = new ExtendedSpendingKey(xsk);
         const extendedViewingKey = new ExtendedViewingKey(xfvk);
-        const address = new PaymentAddress(paymentAddress).encode();
         const spendingKey = extendedSpendingKey.encode();
         const viewingKey = extendedViewingKey.encode();
         const pseudoExtendedKey = extendedSpendingKey
             .to_pseudo_extended_key()
             .encode();
+        const [diversifierIndex, address] = extendedViewingKey.default_payment_address();
         // Clear wasm resources from memory
         shieldedHdWallet.free();
         derivedAccount.free();
@@ -139,9 +131,43 @@ export class Keys {
         extendedSpendingKey.free();
         return {
             address,
+            diversifierIndex,
             spendingKey,
             viewingKey,
             pseudoExtendedKey,
+        };
+    }
+    /**
+     * Generate a payment address from viewing key and diversifier index
+     * @param xfvk - viewing key
+     * @param [index] - diversifier index
+     * @returns GeneratedPaymentAddress
+     */
+    genPaymentAddress(xfvk, index = 0) {
+        const [diversifierIndex, address] = gen_payment_address(xfvk, index);
+        return {
+            address,
+            diversifierIndex,
+        };
+    }
+    /**
+     * Given a bech32m-encoded extended spending key, return viewing and proof-gen keys
+     * @param spendingKey - string
+     * @returns ShieldedKeys
+     */
+    shieldedKeysFromSpendingKey(spendingKey) {
+        const extendedSpendingKey = ExtendedSpendingKey.from_string(spendingKey);
+        const pseudoExtendedKey = extendedSpendingKey
+            .to_pseudo_extended_key()
+            .encode();
+        const viewingKey = extendedSpendingKey.to_viewing_key().encode();
+        const [diversifierIndex, address] = extendedSpendingKey.to_default_address();
+        return {
+            address,
+            diversifierIndex,
+            viewingKey,
+            pseudoExtendedKey,
+            spendingKey,
         };
     }
     /**

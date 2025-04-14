@@ -8,5 +8,7 @@ export declare class WrapperTxMsgValue {
     publicKey?: string;
     memo?: string;
     force?: boolean;
+    expiration?: number;
+    wrapperFeePayer?: string;
     constructor(data: WrapperTxProps);
 }

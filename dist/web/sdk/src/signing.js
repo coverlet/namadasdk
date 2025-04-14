@@ -22,20 +22,37 @@ export class Signing {
     /**
      * Sign Namada transaction
      * @param txProps - TxProps
-     * @param signingKey - private key
-     * @param xsks - spending keys
+     * @param signingKey - private key(s)
      * @param [chainId] - optional chain ID, will enforce validation if present
      * @returns signed tx bytes - Promise resolving to Uint8Array
      */
-    sign(txProps, signingKey, xsks, chainId) {
+    sign(txProps, signingKey, chainId) {
         return __awaiter(this, void 0, void 0, function* () {
             const txMsgValue = new TxMsgValue(txProps);
             const msg = new Message();
             const txBytes = msg.encode(txMsgValue);
-            const txBytesFinal = xsks && xsks.length > 0 ?
-                yield this.sdk.sign_masp(xsks, txBytes)
-                : txBytes;
-            return yield this.sdk.sign_tx(txBytesFinal, signingKey, chainId);
+            let signingKeys = [];
+            if (signingKey instanceof Array) {
+                signingKeys = signingKey;
+            }
+            else {
+                signingKeys.push(signingKey);
+            }
+            return yield this.sdk.sign_tx(txBytes, signingKeys, chainId);
+        });
+    }
+    /**
+     * Sign masp spends
+     * @param txProps - TxProps
+     * @param xsks - spending keys
+     * @returns tx with masp spends signed - Promise resolving to Uint8Array
+     */
+    signMasp(txProps, xsks) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const txMsgValue = new TxMsgValue(txProps);
+            const msg = new Message();
+            const txBytes = msg.encode(txMsgValue);
+            return yield this.sdk.sign_masp(xsks, txBytes);
         });
     }
     /**

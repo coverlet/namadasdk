@@ -6,11 +6,51 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.TxDetailsMsgValue = exports.CommitmentMsgValue = void 0;
+exports.TxDetailsMsgValue = exports.CommitmentMsgValue = exports.MaspTxOut = exports.MaspTxIn = void 0;
 /* eslint-disable @typescript-eslint/no-unused-vars */
 const borsh_1 = require("@dao-xyz/borsh");
 const wrapperTx_1 = require("./wrapperTx");
+class MaspTxIn {
+    constructor(data) {
+        Object.assign(this, data);
+    }
+}
+exports.MaspTxIn = MaspTxIn;
+__decorate([
+    (0, borsh_1.field)({ type: "string" })
+], MaspTxIn.prototype, "token", void 0);
+__decorate([
+    (0, borsh_1.field)({ type: "string" })
+], MaspTxIn.prototype, "value", void 0);
+__decorate([
+    (0, borsh_1.field)({ type: "string" })
+], MaspTxIn.prototype, "owner", void 0);
+class MaspTxOut {
+    constructor(data) {
+        Object.assign(this, data);
+    }
+}
+exports.MaspTxOut = MaspTxOut;
+__decorate([
+    (0, borsh_1.field)({ type: "string" })
+], MaspTxOut.prototype, "token", void 0);
+__decorate([
+    (0, borsh_1.field)({ type: "string" })
+], MaspTxOut.prototype, "value", void 0);
+__decorate([
+    (0, borsh_1.field)({ type: "string" })
+], MaspTxOut.prototype, "address", void 0);
 class CommitmentMsgValue {
+    constructor(data) {
+        const maspTxIn = data.maspTxIn ?
+            data.maspTxIn.map((txIn) => new MaspTxIn(txIn))
+            : undefined;
+        const maspTxOut = data.maspTxOut ?
+            data.maspTxOut.map((txOut) => new MaspTxOut(txOut))
+            : undefined;
+        Object.assign(this, Object.assign(Object.assign({}, data), { maspTxIn,
+            maspTxOut }));
+    }
 }
 exports.CommitmentMsgValue = CommitmentMsgValue;
 __decorate([
@@ -28,6 +68,12 @@ __decorate([
 __decorate([
     (0, borsh_1.field)({ type: (0, borsh_1.option)("string") })
 ], CommitmentMsgValue.prototype, "memo", void 0);
+__decorate([
+    (0, borsh_1.field)({ type: (0, borsh_1.option)((0, borsh_1.vec)(MaspTxIn)) })
+], CommitmentMsgValue.prototype, "maspTxIn", void 0);
+__decorate([
+    (0, borsh_1.field)({ type: (0, borsh_1.option)((0, borsh_1.vec)(MaspTxOut)) })
+], CommitmentMsgValue.prototype, "maspTxOut", void 0);
 class TxDetailsMsgValue {
 }
 exports.TxDetailsMsgValue = TxDetailsMsgValue;

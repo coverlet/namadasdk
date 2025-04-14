@@ -246,6 +246,16 @@ class Tx {
     }
     /**
      * Append signature for transactions signed by Ledger Hardware Wallet
+     * @param txBytes - bytes of the transaction
+     * @param signingData - signing data
+     * @param signature - masp signature
+     * @returns transaction bytes with signature appended
+     */
+    appendMaspSignature(txBytes, signingData, signature) {
+        return this.sdk.sign_masp_ledger(txBytes, signingData, signature);
+    }
+    /**
+     * Append signature for transactions signed by Ledger Hardware Wallet
      * @param txBytes - Serialized transaction
      * @param ledgerSignatureResponse - Serialized signature as returned from Ledger
      * @returns - Serialized Tx bytes with signature appended
@@ -313,7 +323,7 @@ class Tx {
                 case shared_1.TxType.ClaimRewards:
                     return (0, borsh_1.deserialize)(data, types_1.ClaimRewardsMsgValue);
                 case shared_1.TxType.Transfer:
-                    return (0, borsh_1.deserialize)(data, types_1.TransferMsgValue);
+                    return (0, borsh_1.deserialize)(data, types_1.TransferDetailsMsgValue);
                 case shared_1.TxType.RevealPK:
                     return (0, borsh_1.deserialize)(data, types_1.RevealPkMsgValue);
                 case shared_1.TxType.IBCTransfer:
@@ -322,9 +332,13 @@ class Tx {
                     throw "Unsupported Tx type!";
             }
         };
-        return Object.assign(Object.assign({}, wrapperTx), { commitments: commitments.map(({ txType, hash, txCodeId, data, memo }) => (Object.assign({ txType: txType, hash,
+        return Object.assign(Object.assign({}, wrapperTx), { 
+            // Wrapper fee payer is always defined at this point
+            wrapperFeePayer: wrapperTx.wrapperFeePayer, commitments: commitments.map(({ txType, hash, txCodeId, data, memo, maspTxIn, maspTxOut }) => (Object.assign({ txType: txType, hash,
                 txCodeId,
-                memo }, getProps(txType, data)))) });
+                memo,
+                maspTxIn,
+                maspTxOut }, getProps(txType, data)))) });
     }
     /**
      * Generate the memo needed for performing an IBC transfer to a Namada shielded

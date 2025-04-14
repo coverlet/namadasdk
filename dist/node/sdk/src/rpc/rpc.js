@@ -190,15 +190,16 @@ class Rpc {
      * Broadcast a Tx to the ledger
      * @async
      * @param signedTxBytes - Transaction with signature
-     * @param args - WrapperTxProps
+     * @param [deadline] - timeout deadline in seconds, defaults to 60 seconds
      * @returns TxResponseProps object
      */
-    broadcastTx(signedTxBytes, args) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const wrapperTxMsgValue = new types_1.WrapperTxMsgValue(args);
-            const msg = new types_1.Message();
-            const encodedArgs = msg.encode(wrapperTxMsgValue);
-            const response = yield this.sdk.process_tx(signedTxBytes, encodedArgs);
+    broadcastTx(signedTxBytes_1) {
+        return __awaiter(this, arguments, void 0, function* (signedTxBytes, deadline = BigInt(60)) {
+            const response = yield this.sdk
+                .broadcast_tx(signedTxBytes, deadline)
+                .catch((e) => {
+                throw new types_1.BroadcastTxError(e);
+            });
             return (0, borsh_1.deserialize)(Buffer.from(response), types_1.TxResponseMsgValue);
         });
     }
@@ -213,6 +214,63 @@ class Rpc {
         return __awaiter(this, void 0, void 0, function* () {
             const datedViewingKeys = vks.map((vk) => new shared_1.DatedViewingKey(vk.key, String(vk.birthday)));
             yield this.query.shielded_sync(datedViewingKeys, chainId);
+        });
+    }
+    /**
+     * Return shielded rewards for specific owner for the next masp epoch
+     * @async
+     * @param owner - Viewing key of an owner
+     * @param chainId - Chain ID to load the context for
+     * @returns amount in base units
+     */
+    shieldedRewards(owner, chainId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield this.sdk.shielded_rewards(owner, chainId);
+        });
+    }
+    /**
+     * Return global shielded rewards per token
+     * @async
+     * @returns Array of MaspTokenRewards
+     */
+    globalShieldedRewardForTokens() {
+        return __awaiter(this, void 0, void 0, function* () {
+            return (yield this.query.masp_reward_tokens()).map((rewardToken) => {
+                const { name, address, max_reward_rate: maxRewardRate, kp_gain: kpGain, kd_gain: kdGain, locked_amount_target: lockedAmountTarget, } = rewardToken;
+                return {
+                    name,
+                    address,
+                    maxRewardRate,
+                    kpGain,
+                    kdGain,
+                    lockedAmountTarget,
+                };
+            });
+        });
+    }
+    /**
+     * Return shielded rewards for specific owner and token for the next masp epoch
+     * @async
+     * @param owner - Viewing key of an owner
+     * @param token - Token address
+     * @param chainId - Chain ID to load the context for
+     * @returns amount in base units
+     */
+    shieldedRewardsPerToken(owner, token, chainId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield this.sdk.shielded_rewards_per_token(owner, token, chainId);
+        });
+    }
+    /**
+     * Simulate shielded rewards per token and amount in next epoch
+     * @param chainId - Chain ID to load the context for
+     * @param token - Token address
+     * @param amount - Denominated amount
+     * @returns amount in base units
+     */
+    simulateShieldedRewards(chainId, token, amount) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield this.sdk.simulate_shielded_rewards(chainId, token, amount);
         });
     }
 }

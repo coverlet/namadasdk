@@ -1,3 +1,4 @@
+import { Bip44Path, Zip32Path } from "../../../types/src";
 /**
  * Address and public key type
  */
@@ -16,7 +17,18 @@ export type TransparentKeys = {
  */
 export type ShieldedKeys = {
     address: string;
+    diversifierIndex: number;
     viewingKey: string;
     spendingKey: string;
     pseudoExtendedKey: string;
 };
+/**
+ * Result of generating next payment address
+ */
+export type GeneratedPaymentAddress = {
+    address: string;
+    diversifierIndex: number;
+};
+export declare const DEFAULT_BIP44_PATH: Bip44Path;
+export declare const MODIFIED_ZIP32_PATH: Bip44Path;
+export declare const DEFAULT_ZIP32_PATH: Zip32Path;
