@@ -27,12 +27,18 @@ export type DerivedAccount = {
     parentId?: string;
     path: Path;
     type: AccountType;
+    modifiedZip32Path?: string;
     pseudoExtendedKey?: string;
     source?: "imported" | "generated";
     timestamp?: number;
+    diversifierIndex?: number;
 };
-export type Account = Pick<DerivedAccount, "address" | "alias" | "type" | "publicKey" | "owner" | "pseudoExtendedKey" | "source" | "timestamp"> & {
+export type Account = Pick<DerivedAccount, "address" | "alias" | "type" | "publicKey" | "owner" | "pseudoExtendedKey" | "source" | "timestamp" | "diversifierIndex"> & {
     viewingKey?: string;
+};
+export type NamadaKeychainAccount = Account & {
+    id: string;
+    parentId?: string;
 };
 /**
  * ViewingKey with optional birthday

@@ -12,7 +12,7 @@ var TxResponseMsgValue = /** @class */ (function () {
         Object.assign(this, data);
     }
     __decorate([
-        field({ type: "string" })
+        field({ type: "u8" })
     ], TxResponseMsgValue.prototype, "code", void 0);
     __decorate([
         field({ type: vec(BatchTxResultMsgValue) })

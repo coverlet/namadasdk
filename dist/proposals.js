@@ -3,6 +3,7 @@ export var proposalStatuses = [
     "ongoing",
     "passed",
     "rejected",
+    "executed",
 ];
 export var isProposalStatus = function (str) {
     return proposalStatuses.includes(str);

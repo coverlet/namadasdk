@@ -42,6 +42,58 @@ var TransparentTransferMsgValue = /** @class */ (function () {
     return TransparentTransferMsgValue;
 }());
 export { TransparentTransferMsgValue };
+var BparamsSpendMsgValue = /** @class */ (function () {
+    function BparamsSpendMsgValue(data) {
+        Object.assign(this, data);
+    }
+    __decorate([
+        field({ type: vec("u8") })
+    ], BparamsSpendMsgValue.prototype, "rcv", void 0);
+    __decorate([
+        field({ type: vec("u8") })
+    ], BparamsSpendMsgValue.prototype, "alpha", void 0);
+    return BparamsSpendMsgValue;
+}());
+export { BparamsSpendMsgValue };
+var BparamsOutputMsgValue = /** @class */ (function () {
+    function BparamsOutputMsgValue(data) {
+        Object.assign(this, data);
+    }
+    __decorate([
+        field({ type: vec("u8") })
+    ], BparamsOutputMsgValue.prototype, "rcv", void 0);
+    __decorate([
+        field({ type: vec("u8") })
+    ], BparamsOutputMsgValue.prototype, "rcm", void 0);
+    return BparamsOutputMsgValue;
+}());
+export { BparamsOutputMsgValue };
+var BparamsConvertMsgValue = /** @class */ (function () {
+    function BparamsConvertMsgValue(data) {
+        Object.assign(this, data);
+    }
+    __decorate([
+        field({ type: vec("u8") })
+    ], BparamsConvertMsgValue.prototype, "rcv", void 0);
+    return BparamsConvertMsgValue;
+}());
+export { BparamsConvertMsgValue };
+var BparamsMsgValue = /** @class */ (function () {
+    function BparamsMsgValue(data) {
+        Object.assign(this, data);
+    }
+    __decorate([
+        field({ type: BparamsSpendMsgValue })
+    ], BparamsMsgValue.prototype, "spend", void 0);
+    __decorate([
+        field({ type: BparamsOutputMsgValue })
+    ], BparamsMsgValue.prototype, "output", void 0);
+    __decorate([
+        field({ type: BparamsConvertMsgValue })
+    ], BparamsMsgValue.prototype, "convert", void 0);
+    return BparamsMsgValue;
+}());
+export { BparamsMsgValue };
 /**
  * Shielded Transfer schemas
  */
@@ -66,12 +118,19 @@ var ShieldedTransferDataMsgValue = /** @class */ (function () {
 export { ShieldedTransferDataMsgValue };
 var ShieldedTransferMsgValue = /** @class */ (function () {
     function ShieldedTransferMsgValue(_a) {
-        var data = _a.data, gasSpendingKey = _a.gasSpendingKey;
+        var data = _a.data, gasSpendingKey = _a.gasSpendingKey, bparams = _a.bparams;
         Object.assign(this, {
             data: data.map(function (shieldedTransferDataProps) {
                 return new ShieldedTransferDataMsgValue(shieldedTransferDataProps);
             }),
             gasSpendingKey: gasSpendingKey,
+            bparams: bparams === null || bparams === void 0 ? void 0 : bparams.map(function (bparam) {
+                return new BparamsMsgValue({
+                    spend: new BparamsSpendMsgValue(bparam.spend),
+                    output: new BparamsOutputMsgValue(bparam.output),
+                    convert: new BparamsConvertMsgValue(bparam.convert),
+                });
+            }),
         });
     }
     __decorate([
@@ -80,6 +139,9 @@ var ShieldedTransferMsgValue = /** @class */ (function () {
     __decorate([
         field({ type: option("string") })
     ], ShieldedTransferMsgValue.prototype, "gasSpendingKey", void 0);
+    __decorate([
+        field({ type: option(vec(BparamsMsgValue)) })
+    ], ShieldedTransferMsgValue.prototype, "bparams", void 0);
     return ShieldedTransferMsgValue;
 }());
 export { ShieldedTransferMsgValue };
@@ -118,6 +180,9 @@ var ShieldingTransferMsgValue = /** @class */ (function () {
     __decorate([
         field({ type: vec(ShieldingTransferDataMsgValue) })
     ], ShieldingTransferMsgValue.prototype, "data", void 0);
+    __decorate([
+        field({ type: option(vec(BparamsMsgValue)) })
+    ], ShieldingTransferMsgValue.prototype, "bparams", void 0);
     return ShieldingTransferMsgValue;
 }());
 export { ShieldingTransferMsgValue };
@@ -142,13 +207,20 @@ var UnshieldingTransferDataMsgValue = /** @class */ (function () {
 export { UnshieldingTransferDataMsgValue };
 var UnshieldingTransferMsgValue = /** @class */ (function () {
     function UnshieldingTransferMsgValue(_a) {
-        var source = _a.source, data = _a.data, gasSpendingKey = _a.gasSpendingKey;
+        var source = _a.source, data = _a.data, gasSpendingKey = _a.gasSpendingKey, bparams = _a.bparams;
         Object.assign(this, {
             source: source,
             data: data.map(function (unshieldingTransferDataProps) {
                 return new UnshieldingTransferDataMsgValue(unshieldingTransferDataProps);
             }),
             gasSpendingKey: gasSpendingKey,
+            bparams: bparams === null || bparams === void 0 ? void 0 : bparams.map(function (bparam) {
+                return new BparamsMsgValue({
+                    spend: new BparamsSpendMsgValue(bparam.spend),
+                    output: new BparamsOutputMsgValue(bparam.output),
+                    convert: new BparamsConvertMsgValue(bparam.convert),
+                });
+            }),
         });
     }
     __decorate([
@@ -160,6 +232,9 @@ var UnshieldingTransferMsgValue = /** @class */ (function () {
     __decorate([
         field({ type: option("string") })
     ], UnshieldingTransferMsgValue.prototype, "gasSpendingKey", void 0);
+    __decorate([
+        field({ type: option(vec(BparamsMsgValue)) })
+    ], UnshieldingTransferMsgValue.prototype, "bparams", void 0);
     return UnshieldingTransferMsgValue;
 }());
 export { UnshieldingTransferMsgValue };
@@ -181,6 +256,9 @@ var TransferDataMsgValue = /** @class */ (function () {
     return TransferDataMsgValue;
 }());
 export { TransferDataMsgValue };
+/**
+ * Used only for serializing transfers during build
+ */
 var TransferMsgValue = /** @class */ (function () {
     function TransferMsgValue() {
     }
@@ -196,3 +274,22 @@ var TransferMsgValue = /** @class */ (function () {
     return TransferMsgValue;
 }());
 export { TransferMsgValue };
+/**
+ * When deserializing for Transfer Details, return version with
+ * shieldedSectionHash encoded as hex instead of Uint8Array
+ */
+var TransferDetailsMsgValue = /** @class */ (function () {
+    function TransferDetailsMsgValue() {
+    }
+    __decorate([
+        field({ type: vec(TransferDataMsgValue) })
+    ], TransferDetailsMsgValue.prototype, "sources", void 0);
+    __decorate([
+        field({ type: vec(TransferDataMsgValue) })
+    ], TransferDetailsMsgValue.prototype, "targets", void 0);
+    __decorate([
+        field({ type: option("string") })
+    ], TransferDetailsMsgValue.prototype, "shieldedSectionHash", void 0);
+    return TransferDetailsMsgValue;
+}());
+export { TransferDetailsMsgValue };

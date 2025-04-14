@@ -7,6 +7,7 @@ var Message = /** @class */ (function () {
             return serialize(value);
         }
         catch (e) {
+            console.log("error", e);
             throw new Error("Unable to serialize message: ".concat(e));
         }
     };

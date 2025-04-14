@@ -1,3 +1,14 @@
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -7,8 +18,47 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { field, option, vec } from "@dao-xyz/borsh";
 import { WrapperTxMsgValue } from "./wrapperTx";
+var MaspTxIn = /** @class */ (function () {
+    function MaspTxIn(data) {
+        Object.assign(this, data);
+    }
+    __decorate([
+        field({ type: "string" })
+    ], MaspTxIn.prototype, "token", void 0);
+    __decorate([
+        field({ type: "string" })
+    ], MaspTxIn.prototype, "value", void 0);
+    __decorate([
+        field({ type: "string" })
+    ], MaspTxIn.prototype, "owner", void 0);
+    return MaspTxIn;
+}());
+export { MaspTxIn };
+var MaspTxOut = /** @class */ (function () {
+    function MaspTxOut(data) {
+        Object.assign(this, data);
+    }
+    __decorate([
+        field({ type: "string" })
+    ], MaspTxOut.prototype, "token", void 0);
+    __decorate([
+        field({ type: "string" })
+    ], MaspTxOut.prototype, "value", void 0);
+    __decorate([
+        field({ type: "string" })
+    ], MaspTxOut.prototype, "address", void 0);
+    return MaspTxOut;
+}());
+export { MaspTxOut };
 var CommitmentMsgValue = /** @class */ (function () {
-    function CommitmentMsgValue() {
+    function CommitmentMsgValue(data) {
+        var maspTxIn = data.maspTxIn ?
+            data.maspTxIn.map(function (txIn) { return new MaspTxIn(txIn); })
+            : undefined;
+        var maspTxOut = data.maspTxOut ?
+            data.maspTxOut.map(function (txOut) { return new MaspTxOut(txOut); })
+            : undefined;
+        Object.assign(this, __assign(__assign({}, data), { maspTxIn: maspTxIn, maspTxOut: maspTxOut }));
     }
     __decorate([
         field({ type: "u8" })
@@ -25,6 +75,12 @@ var CommitmentMsgValue = /** @class */ (function () {
     __decorate([
         field({ type: option("string") })
     ], CommitmentMsgValue.prototype, "memo", void 0);
+    __decorate([
+        field({ type: option(vec(MaspTxIn)) })
+    ], CommitmentMsgValue.prototype, "maspTxIn", void 0);
+    __decorate([
+        field({ type: option(vec(MaspTxOut)) })
+    ], CommitmentMsgValue.prototype, "maspTxOut", void 0);
     return CommitmentMsgValue;
 }());
 export { CommitmentMsgValue };
